@@ -41,20 +41,49 @@ endif ( CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG )
 set ( EXTERNALS_PREFIX ${PROJECT_BINARY_DIR}/external )
 set ( EXTERNALS_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNALS_PREFIX} )
 
-# Compile the 2D-engine
-ExternalProject_Add ( 2D_ENGINE
+# Compile the eventsystem
+ExternalProject_Add ( EVENTSYSTEM
     PREFIX ${EXTERNALS_PREFIX}
-    GIT_REPOSITORY https://github.com/firecoders/2D-engine
-    GIT_TAG v0.1.0
+    URL https://github.com/firecoders/eventsystem/archive/v0.2.2.tar.gz
+    URL_HASH SHA256=35d4a3d6da47a67d501baa473997152e097efc67b8a1075db8098a5153a7d75b
+    DOWNLOAD_NAME eventsystem-v0.2.2.tar.gz
+    CMAKE_ARGS ${EXTERNALS_CMAKE_ARGS}
+)
+
+# Compile the 2D-gui
+ExternalProject_Add ( 2D_GUI
+    PREFIX ${EXTERNALS_PREFIX}
+    URL https://github.com/firecoders/2D-gui/archive/v0.3.0.tar.gz
+    URL_HASH SHA256=b454e4de5583ae9551bf172fcfd075e7df3e089e43e999b94243370a7b1fef0f
+    DOWNLOAD_NAME 2D-gui-v0.3.0.tar.gz
+    CMAKE_ARGS ${EXTERNALS_CMAKE_ARGS} -DFILEPATH=${EXTERNALS_PREFIX}
+)
+
+# Compile the gamelogic
+ExternalProject_Add ( GAMELOGIC
+    PREFIX ${EXTERNALS_PREFIX}
+    URL https://github.com/firecoders/gamelogic/archive/v0.1.0.tar.gz
+    URL_HASH SHA256=b4034eaf62d6d43bbf06eb09ae0baa673e444a702fe36dd5bd5885452054e559
+    DOWNLOAD_NAME gamelogic-v0.1.0.tar.gz
     CMAKE_ARGS ${EXTERNALS_CMAKE_ARGS}
 )
 
 # Make sure sfml is installed
 find_package ( SFML 2 COMPONENTS graphics window system )
 
-# Import lib2D-engine.a
-add_library ( lib2D-engine STATIC IMPORTED )
-set_target_properties ( lib2D-engine PROPERTIES IMPORTED_LOCATION ${EXTERNALS_PREFIX}/lib/lib2D-engine.a )
-add_dependencies ( lib2D-engine 2D_ENGINE )
+# Import libeventsystem.a
+add_library ( libeventsystem STATIC IMPORTED )
+set_target_properties ( libeventsystem PROPERTIES IMPORTED_LOCATION ${EXTERNALS_PREFIX}/lib/libeventsystem.a )
+add_dependencies ( libeventsystem EVENTSYSTEM )
+
+# Import lib2D-gui.a
+add_library ( lib2D-gui STATIC IMPORTED )
+set_target_properties ( lib2D-gui PROPERTIES IMPORTED_LOCATION ${EXTERNALS_PREFIX}/lib/lib2D-gui.a )
+add_dependencies ( lib2D-gui 2D_GUI )
+
+# Import libgamelogic.a
+add_library ( libgamelogic STATIC IMPORTED )
+set_target_properties ( libgamelogic PROPERTIES IMPORTED_LOCATION ${EXTERNALS_PREFIX}/lib/libgamelogic.a )
+add_dependencies ( libgamelogic GAMELOGIC )
 
 add_subdirectory ( ${CMAKE_SOURCE_DIR}/src )

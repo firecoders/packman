@@ -31,5 +31,8 @@ include_directories ( ${SFML_INCLUDE_DIRS} )
 target_link_libraries ( packman ${SFML_LIBRARIES} )
 
 # Use 2D-engine for packman executable
-include_directories ( ${EXTERNALS_PREFIX}/src/2D_ENGINE/inc )
-target_link_libraries ( packman lib2D-engine )
+include_directories ( ${EXTERNALS_PREFIX}/src/EVENTSYSTEM/inc )
+include_directories ( ${EXTERNALS_PREFIX}/src/2D_GUI/inc )
+include_directories ( ${EXTERNALS_PREFIX}/src/GAMELOGIC/inc )
+target_link_libraries ( packman lib2D-gui )
+target_link_libraries ( packman libgamelogic )
