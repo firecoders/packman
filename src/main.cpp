@@ -30,10 +30,13 @@
 #include "engine/events/Lambda_receiver.hpp"
 
 #include "states/Splash_state.h"
+#include "states/Ingame_state.h"
 #include "states/State_manager.h"
 
 #include "utils/typedefs.hpp"
 #include "utils/Globals.hpp"
+
+#include "gamelogic/Level.h"
 
 int main ()
 {
@@ -42,9 +45,16 @@ int main ()
 
     utils::Globals globals { resource_manager, state_manager };
 
-    auto splash = std::make_shared < states::Splash_state > ( globals );
+    auto lvl = std::make_shared < gamelogic::Level > ( "res/levels/example.txt", globals );
+    lvl->load_level ();
 
+    auto ingame = lvl->get_ingame_state ();
+    state_manager->add_state ( { "ingame" }, ingame->get_receiver () );
+    state_manager->add_state ( { "splash", "post" }, ingame->get_receiver () );
+
+    auto splash = std::make_shared < states::Splash_state > ( globals );
     state_manager->add_state ( { "splash" }, splash->get_receiver () );
+
     state_manager->switch_state ( { "splash" } );
 
     std::shared_ptr < engine::gui::Window > window = state_manager->wrap_window
