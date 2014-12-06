@@ -23,6 +23,8 @@ cmake_minimum_required ( VERSION 2.6 )
 project ( packman )
 include ( ExternalProject )
 
+cmake_policy ( SET CMP0009 NEW )
+
 set ( CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" )
 
 # Output packman executable in root directory
