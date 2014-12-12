@@ -28,6 +28,7 @@
 #include "engine/gui/Resource_manager.h"
 
 #include "content/Packman.h"
+#include "content/Ghost.h"
 #include "content/Wall.h"
 
 using namespace gamelogic;
@@ -64,6 +65,20 @@ void Level::load_level ()
                     world->add_entity
                     (
                         std::make_shared < content::Packman >
+                        (
+                            std::weak_ptr < engine::gamelogic::Pruning_world < Entity > > { world },
+                            globals.state_manager->get_entry_point (),
+                            std::weak_ptr < engine::types::Index_node < utils::Event_node > > { ingame_state->get_index () },
+                            std::weak_ptr < engine::gui::Resource_manager > { globals.resource_manager },
+                            engine::geometry::Vector < int > { x, y }
+                        )
+                    );
+                    break;
+
+                case content::Ghost::get_level_char ():
+                    world->add_entity
+                    (
+                        std::make_shared < content::Ghost >
                         (
                             std::weak_ptr < engine::gamelogic::Pruning_world < Entity > > { world },
                             globals.state_manager->get_entry_point (),
