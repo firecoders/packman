@@ -48,8 +48,13 @@ namespace content
             bool is_obstacle_for ( std::string other_entity_type ) const;
             constexpr static char get_level_char () { return 'P'; };
 
+            void die ();
+
         private:
+            bool alive;
+
             void handle_key_event ( utils::Event event );
+            void handle_custom_event ( utils::Event event );
     };
 } /* namespace content */
 

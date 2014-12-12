@@ -41,10 +41,14 @@ Packman::Packman
         resource_manager,
         position,
         "actor.packman"
-    )
+    ),
+    alive ( true )
 {
     utils::add_lambda_receiver ( index, { "sfml", "KeyPressed" },
         [ this ] ( utils::Event event ) { handle_key_event ( event ); }
+    );
+    utils::add_lambda_receiver ( index, { "custom" },
+        [ this ] ( utils::Event event ) { handle_custom_event ( event ); }
     );
 }
 
@@ -53,8 +57,23 @@ bool Packman::is_obstacle_for ( std::string other_entity_type ) const
     return false;
 }
 
+void Packman::die ()
+{
+    alive = false;
+    set_visibility ( false );
+    utils::Event death_event = std::make_shared < engine::types::Dict > ();
+    ( * death_event ) [ "type.string" ] = std::string ( "death" );
+    ( * death_event ) [ "pos.x" ] = get_position ().get_x ();
+    ( * death_event ) [ "pos.y" ] = get_position ().get_y ();
+    ( * death_event ) [ "actor.type" ] = get_type_string ();
+    ( * death_event ) [ "actor.address" ] = get_address ();
+    entry_point.lock ()->receive ( death_event );
+}
+
 void Packman::handle_key_event ( utils::Event event )
 {
+    if ( ! alive )
+        return;
     if ( event->at ( "type.string" ).get < std::string > () != "converted sf::Event of type KeyPressed" )
         return;
     std::string key_code = event->at ( "key.code" ).get < std::string > ();
@@ -66,4 +85,24 @@ void Packman::handle_key_event ( utils::Event event )
         propose_move_offset ( { 0, 1 } );
     if ( key_code == "D" || key_code == "Right" )
         propose_move_offset ( { 1, 0 } );
+}
+
+void Packman::handle_custom_event ( utils::Event event )
+{
+    if ( event->at ( "type.string" ).get < std::string > () != "collision" )
+        return;
+    if
+    (
+        (
+            event->at ( "active.address" ).get < std::string > () == get_address () &&
+            event->at ( "passive.type" ).get < std::string > () == "actor.ghost"
+        ) ||
+        (
+            event->at ( "passive.address" ).get < std::string > () == get_address () &&
+            event->at ( "active.type" ).get < std::string > () == "actor.ghost"
+        )
+    )
+    {
+        die ();
+    }
 }
