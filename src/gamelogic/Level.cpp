@@ -30,6 +30,7 @@
 #include "content/Packman.h"
 #include "content/Ghost.h"
 #include "content/Wall.h"
+#include "content/Dot.h"
 
 using namespace gamelogic;
 
@@ -97,6 +98,19 @@ void Level::load_level ()
                             std::weak_ptr < engine::types::Index_node < utils::Event_node > > { ingame_state->get_index () },
                             std::weak_ptr < engine::gui::Resource_manager > { globals.resource_manager },
                             engine::geometry::Vector < int > { x, y }
+                        )
+                    );
+                    break;
+
+                case content::Dot::get_level_char ():
+                    world->add_entity
+                    (
+                        std::make_shared < content::Dot >
+                        (
+                            std::weak_ptr < engine::types::Index_node < utils::Event_node > > { ingame_state->get_index () },
+                            std::weak_ptr < engine::gui::Resource_manager > { globals.resource_manager },
+                            engine::geometry::Vector < int > { x, y },
+                            globals.state_manager->get_entry_point ()
                         )
                     );
                     break;
