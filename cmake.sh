@@ -14,6 +14,9 @@ case $1 in
         echo "removing build/ and packman executable"
         rm -rf build packman
         ;;
+    "run")
+        ./packman
+        ;;
     *)
         make -C build $1
         ;;
